@@ -95,17 +95,24 @@ def func_plot_history(history):
     plt.show()
 
 # ---- XGBoost evaluation
-def func_plot_eval_xgb(model):
+def func_plot_eval_xgb(model, label):
     # retrieve performance metrics
+    if len(label)>2:
+        error_   = "merror"
+        logloss_ = "mlogloss"
+    else:
+        error_  = "error"
+        logloss_= "logloss"
+        
     results = model.evals_result()
-    epochs = len(results['validation_0']['merror'])
+    epochs = len(results['validation_0'][error_])
     x_axis = range(0, epochs)
 
     plt.figure(figsize=(15,10))
     plt.subplot(221)
     # Plot training & validation accuracy values
-    plt.plot(x_axis, results['validation_0']['mlogloss'], label='Train')
-    plt.plot(x_axis, results['validation_1']['mlogloss'], label='Test')
+    plt.plot(x_axis, results['validation_0'][logloss_], label='Train')
+    plt.plot(x_axis, results['validation_1'][logloss_], label='Test')
     plt.ylabel('Log Loss')
     plt.xlabel('Epochs')
     plt.title('XGBoost Log Loss')
@@ -115,8 +122,8 @@ def func_plot_eval_xgb(model):
 
     # Plot training & validation loss values
     plt.subplot(222)
-    plt.plot(x_axis, results['validation_0']['merror'], label='Train')
-    plt.plot(x_axis, results['validation_1']['merror'], label='Test')
+    plt.plot(x_axis, results['validation_0'][error_], label='Train')
+    plt.plot(x_axis, results['validation_1'][error_], label='Test')
     plt.legend()
     plt.ylabel('Classification Error')
     plt.xlabel('Epochs')
