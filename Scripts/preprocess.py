@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 
     Python file containing functions and classes to
@@ -39,17 +40,13 @@ from nltk.stem.snowball import SnowballStemmer
 import numpy as np
 import seaborn as sns
 import xgboost as xgb
-# ---- Call tqdm to see progress bar with pandas
-tqdm().pandas()
+
 
 
 N = 0.5
 
 
-def remove_whitespace(text):
-    """remove extra whitespaces from text"""
-    text = text.strip()
-    return " ".join(text.split())
+
 
 def func_remove_char_specific(text):
     table = '!"#$%&()*+,./:;<=>?@[\]^_`{|}~•'
@@ -63,36 +60,7 @@ def func_remove_upper_case(text):
     stripped = [w.lower() if w.isupper() else w for w in words]
     return " ".join(stripped)
 
-# ---- XGBoost classifier ---------------------------------------
 
-
-
-# ---- Evaluation metrics ---------------------------------------
-
-def func_plot_history(history):
-    
-    plt.figure(figsize=(15,10))
-    plt.subplot(221)
-    # Plot training & validation accuracy values
-    plt.plot(history.history['accuracy'])
-    plt.plot(history.history['val_accuracy'])
-    plt.title('Model accuracy')
-    plt.ylabel('Accuracy')
-    plt.xlabel('Epoch')
-    plt.legend(['Train', 'Test'], loc='upper left')
-    plt.grid(True)
-
-
-    # Plot training & validation loss values
-    plt.subplot(222)
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('Model loss')
-    plt.ylabel('Loss')
-    plt.xlabel('Epoch')
-    plt.legend(['Train', 'Test'], loc='upper left')
-    plt.grid(True)
-    plt.show()
 
 # ---- XGBoost evaluation
 def func_plot_eval_xgb(model, label):
@@ -148,36 +116,7 @@ def plot_confusion_matrix(cm, classes, normalized=True, cmap='bone'):
     
     
 
-        
-def func_precision_recall(y_true, y_test, N=0.5,  verbose=True):
-    r = [1 if i[1]>N else 0 for i in y_test]
-    conf  = confusion_matrix(y_true, r)
-    tn, fp, fn, tp = conf[0][0], conf[0][1], conf[1][0], conf[1][1]
-    if verbose:
-        print('''     Predicted       Predicted  
-                 NO               YES
-        Real   TN={}          FP={}
-        NO     
-        Real   FN={}           TP={}
-        YES       '''.format(tn, fp, fn, tp))
-        print('''
-                  TP                     
-    Precision = _______ = {}%    
-                 TP+FP       
 
-
-               TP
-    Recall = ______  = {}%
-              FN+TP           '''.format(round(tp/(tp+fp)*100,2), round(tp/(fn+tp)*100,2)))
-    return round(tp/(tp+fp)*100,2), round(tp/(fn+tp)*100,2)
-
-def func_detect_lang_google( x):
-
-    translate = Translator()
-    try:
-        return translate.detect(x).lang
-    except:
-        return np.nan
     
     
 def func_translate_google(x, src="en", dest="fr"):
@@ -228,19 +167,7 @@ def func_lemmatize_verbs(words):
         lemmas.append(lemma)
     return " ".join(lemmas)
 
-def func_remove_phone_number(x):
-    '''
-        Function to find and remove phone number with regex
-        input:
-            - x : string / raw string 
-        output:
-            - x : without phone number
-    '''
-    # ---- Phone number 
-    r = re.compile(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})') 
-    for i in r.findall(x):
-        x = x.replace(i, '')
-    return x 
+
 
 def is_number(s):
     '''
@@ -268,21 +195,7 @@ def func_numeric(x):
     return " ".join(x_)
 
 
-def func_remove_stop_words(x, stop_word):
-    '''
-        Function to remove a list of words
-        input:
-            - x : raw string 
-            - stop_word_fr: stopwords to delete 
-        output:
-            - x_new : new string without stopwords 
-    '''
-    x_new = word_tokenize(x)
-    x_ = []
-    for i in x_new:
-        if i not in stop_word:
-            x_.append(i)
-    return " ".join(x_)
+
 
 
 def func_remove_chars(df, list_chars):
@@ -327,3 +240,31 @@ def func_replace_words(x, dict_):
     return " ".join(x)
 
 
+
+
+
+
+
+
+class PreProcessing:
+    
+    def __init__(self, data):
+        print('''Welcome in this preprocessing classe
+        ''')
+        self.data = data
+        
+    def remove_phone_number(self):
+        '''
+            Function to find and remove phone number with regex
+            input:
+                - x : string / raw string 
+            output:
+                - x : without phone number
+        '''
+        # ---- Phone number 
+        phone = []
+        r = re.compile(r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})') 
+        for i in r.findall(self):
+            phone.append(i)
+            self = self.replace(i, '')
+        return self , phone
