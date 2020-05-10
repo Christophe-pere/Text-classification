@@ -29,10 +29,9 @@ It contains machine learning implantation et deep learning implantation for bina
 	- [Load Pretrained Model FastText]()
 	- [Word Embeddings]()
 	- [Sklearn pipeline implement]()
-		
 	- [Multinomial Naïve Bayes](#multinomial-naïve-bayes)
 	- [Logistic Regression](#logistic-regression)
-	- [Support Vector Machine](#support vector-machine)
+	- [Support Vector Machine](#support-vector-machine)
 	- [RandomForest](#randomforest)
 	- [Stochastic Descent](#stochastic-descent)
 	- [Gradient Boosting](#gradient-boosting)
@@ -51,15 +50,15 @@ It contains machine learning implantation et deep learning implantation for bina
 	- [Bidirectionnal RNN]()
 	- [Bidirectionnal LSTM]()
 	- [Bidirectionnal GRU]()
-	- [Recurrent Convolutational Neural Network]
+	- [Recurrent Convolutational Neural Network]()
 		- [Variation 1]()
 		- [Variation 2]()
 		- [Variation 3]()
 - [Transformers](#transformers)
-- [ULMFit]
-- [GPT-2]
-- [Reinforcement Learning]
-- [Knowledge Graph]
+- [ULMFit]()
+- [GPT-2]()
+- [Reinforcement Learning]()
+- [Knowledge Graph]()
 
 ---
 
