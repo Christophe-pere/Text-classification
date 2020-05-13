@@ -13,12 +13,13 @@ It contains machine learning implantation et deep learning implantation for bina
 - [Text informations](#text-informations)
 - [Classes Repartition](#classes-repartition)
 - [N-grams](#n-grams)
-	- [Unigrams]()
-	- [Unigrams without stopwords]()
-	- [Bigrams]()
+	- [Unigrams](#unigrams)
+	- [Unigrams without stopwords](#unigrams-without-stopwords)
+	- [Bigrams](#bigrams)
 	- [Bigrams without stopwords]()
-	- [Trigrams]()
+	- [Trigrams](#trigrams)
 	- [Trigrams without stopwords]()
+	- [5-grams without stopwords]()
 - [Part of Speech-Tagging]()
 - [Machine Learning](#machine-learning)
 	- [Split train test]()
@@ -126,6 +127,9 @@ It contains machine learning implantation et deep learning implantation for bina
 
 ### Trigrams without stopwords
 
+### 5-grams without stopwords
+
+
 ###### [Back to top](#table-of-contents)
 
 ---
@@ -168,7 +172,6 @@ It contains machine learning implantation et deep learning implantation for bina
 
 ### Stochastic Descent
 
-> In progress
 
 ### Gradient Boosting
 
