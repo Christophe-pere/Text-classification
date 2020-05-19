@@ -51,6 +51,13 @@ Shallow Network,Deep Neaural Network,RNN, LSTM, CNN, GRU, CNN-LSTM, CNN-GRU, Bid
 	- cross_validate_NN() custom function for cross-validation (Stratified k-fold) and computed metrics
 - Save the results if save_results if True
 
+--- 
+Next steps:
+- Use compressed layer with [TensorNet](https://github.com/google/TensorNetwork) like this [post](https://blog.tensorflow.org/2020/02/speeding-up-neural-networks-using-tensornetwork-in-keras.html) 
+- Use [Transformers](https://arxiv.org/abs/1706.03762) ([HuggingFace](https://huggingface.co/))
+- Distributed Neural Networks
+- GridSearch for Hyperparameters tuning
+- Transform the notebook in script with dictionnary of models to test 
 ---
 ## Contribution
 Your contributions are always welcome!
