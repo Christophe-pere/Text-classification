@@ -101,7 +101,7 @@ class Metrics(object):
     @classmethod 
     def func_confusion_matrix(self, model, y, x, labels):
         '''
-        Function to plot the ROC AUC curves for binary or multiclass classification. 
+        Compute the confusion matrix for binary or multiclass classification. 
         Correct for standard machine learning models and Neural Networks. 
         @param model: (model) classification model
         @param x: (list) validation sample
@@ -191,6 +191,7 @@ class Metrics(object):
         '''
         Function to plot the evaluation curves for xgboost models 
         @param model: (model) xgboost model
+        @param labels: (list) list ocntaining the labels in string 
         '''
         # retrieve performance metrics
         results = model.evals_result()
@@ -288,7 +289,7 @@ class Metrics(object):
         self.func_plot_history(history)
         if len(labels)==2:
 
-            print(classification_report(valid_y, (model.predict(x) > 0.5).astype(int), target_names=labels))
+            print(classification_report(y, (model.predict(x) > 0.5).astype(int), target_names=labels))
             print(f"\nThe balanced accuracy is : {round(100*balanced_accuracy_score(y, (model.predict(x)>0.5).astype(int)),2)}%\n")
             print(f"\nThe Zero-one Loss is : {round(100*zero_one_loss(y, (model.predict(x)>0.5).astype(int)),2)}%\n")
             print(f"\nExplained variance score: {round(explained_variance_score(y, (model.predict(x)>0.5).astype(int)),3)}\n" )
@@ -296,7 +297,7 @@ class Metrics(object):
             self.func_precision_recall_curve(model, x, y, labels)
 
             print(f"\nCohen's kappa: {round(100*cohen_kappa_score(y, (model.predict(x) > 0.5).astype(int) ),2)}% \n") 
-            matrices = self.func_confusion_matrix(model, y, x, labels)
+            #matrices = self.func_confusion_matrix(model, y, x, labels)
             cm = confusion_matrix(y, (model.predict(x) > 0.5).astype(int))
 
             print("\nConfusion Matrix\n")
@@ -310,7 +311,7 @@ class Metrics(object):
             self.func_precision_recall_curve(model, x, y, labels)
 
             print(f"\nCohen's kappa: {round(100*cohen_kappa_score(y, model.predict(x).argmax(axis=-1) ),2)}%\n")
-            matrices = self.func_confusion_matrix(model, y, x, labels)
+            #matrices = self.func_confusion_matrix(model, y, x, labels)
             cm = confusion_matrix(y, model.predict(x).argmax(axis=-1))
 
             print(classification_report(y, model.predict(x).argmax(axis=-1), target_names=labels))

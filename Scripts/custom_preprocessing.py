@@ -337,7 +337,7 @@ class PreProcessing(object):
     
     
     @classmethod
-    def func_preprocess(self, text):
+    def preprocess(self, text):
         '''
         Function to remove special characters
         @param text: (pandas dataframe) text
@@ -488,6 +488,25 @@ class PreProcessing(object):
         if lang=="fr":
             corpus = corpus.apply(lambda x: self.func_remove_stop_words(x, stop_word))
         vec = CountVectorizer(ngram_range=(3, 3), stop_words="english").fit(corpus)
+        bag_of_words = vec.transform(corpus)
+        sum_words = bag_of_words.sum(axis=0) 
+        words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
+        words_freq =sorted(words_freq, key = lambda x: x[1], reverse=True)
+        return words_freq[:n]
+    
+    @classmethod
+    def get_top_n_5grams_sw(self, corpus, stop_word=None, lang="fr", n=None):
+        '''
+        Function to return a list of most frequent trigrams in documents
+        @param corpus: (str or pandas.dataframe) documents 
+        @param stop_word: (list) list containing stopwords
+        @param lang: (str) language of the text
+        @param n: (int) number of most frequent unigrams
+        @return: (list) most frequent unigrams
+        '''
+        if lang=="fr":
+            corpus = corpus.apply(lambda x: self.func_remove_stop_words(x, stop_word))
+        vec = CountVectorizer(ngram_range=(5, 5), stop_words="english").fit(corpus)
         bag_of_words = vec.transform(corpus)
         sum_words = bag_of_words.sum(axis=0) 
         words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
