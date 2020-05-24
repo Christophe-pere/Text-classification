@@ -27,7 +27,7 @@ class Metrics(object):
         
 
     @classmethod 
-    def func_roc_auc_curve(self, model, x, y, labels, gb=False):
+    def roc_auc_curve(self, model, x, y, labels, gb=False):
         '''
         Function to plot the ROC AUC curves for binary or multiclass classification. 
         Correct for standard machine learning models and Neural Networks. 
@@ -99,7 +99,7 @@ class Metrics(object):
         plt.show()
 
     @classmethod 
-    def func_confusion_matrix(self, model, y, x, labels):
+    def confusion_matrix(self, model, y, x, labels):
         '''
         Compute the confusion matrix for binary or multiclass classification. 
         Correct for standard machine learning models and Neural Networks. 
@@ -127,7 +127,7 @@ class Metrics(object):
             return df_mcm
         
     @classmethod 
-    def func_precision_recall_curve(self, model, x, y, labels, gb=False):
+    def precision_recall_curve(self, model, x, y, labels, gb=False):
         '''
         Function to plot the recall precision curves for binary or multiclass classification. 
         Correct for standard machine learning models and Neural Networks. 
@@ -187,7 +187,7 @@ class Metrics(object):
         plt.show()
 
     @classmethod 
-    def func_plot_eval_xgb(self, model, labels):
+    def plot_eval_xgb(self, model, labels):
         '''
         Function to plot the evaluation curves for xgboost models 
         @param model: (model) xgboost model
@@ -247,7 +247,7 @@ class Metrics(object):
             #plt.savefig('confusion-matrix.png')
 
     @classmethod
-    def func_plot_history(self, history):
+    def plot_history(self, history):
         '''
         Function to plot the learning curves of a neural network
         @param history: metrics of a neural network
@@ -277,7 +277,7 @@ class Metrics(object):
             
             
     @classmethod
-    def func_metrics_deep_learning(self, model, history, x, y, labels):
+    def metrics_deep_learning(self, model, history, x, y, labels):
         '''
         Function to plot the different metrics for the deep learning algorithms.
         @param model: (tensorflow.python.keras.engine.sequential.Sequential) deep learning model
@@ -286,18 +286,18 @@ class Metrics(object):
         @param y: (numpy.ndarray) target data
         @param labels: (list) list containing the labels in str  
         '''
-        self.func_plot_history(history)
+        self.plot_history(history)
         if len(labels)==2:
 
             print(classification_report(y, (model.predict(x) > 0.5).astype(int), target_names=labels))
             print(f"\nThe balanced accuracy is : {round(100*balanced_accuracy_score(y, (model.predict(x)>0.5).astype(int)),2)}%\n")
             print(f"\nThe Zero-one Loss is : {round(100*zero_one_loss(y, (model.predict(x)>0.5).astype(int)),2)}%\n")
             print(f"\nExplained variance score: {round(explained_variance_score(y, (model.predict(x)>0.5).astype(int)),3)}\n" )
-            self.func_roc_auc_curve(model, x, y, labels)
-            self.func_precision_recall_curve(model, x, y, labels)
+            self.roc_auc_curve(model, x, y, labels)
+            self.precision_recall_curve(model, x, y, labels)
 
             print(f"\nCohen's kappa: {round(100*cohen_kappa_score(y, (model.predict(x) > 0.5).astype(int) ),2)}% \n") 
-            #matrices = self.func_confusion_matrix(model, y, x, labels)
+            #matrices = self.confusion_matrix(model, y, x, labels)
             cm = confusion_matrix(y, (model.predict(x) > 0.5).astype(int))
 
             print("\nConfusion Matrix\n")
@@ -307,11 +307,11 @@ class Metrics(object):
             print(f"\nThe balanced accuracy is : {round(100*balanced_accuracy_score(y, model.predict(x).argmax(axis=-1)),2)}%\n")
             print(f"\nThe Zero-one Loss is : {round(100*zero_one_loss(y, model.predict(x).argmax(axis=-1)),2)}%\n")
             print(f"\nExplained variance score: {round(explained_variance_score(y, model.predict(x).argmax(axis=-1)),3)}\n" ) 
-            self.func_roc_auc_curve(model, x, y, labels)
-            self.func_precision_recall_curve(model, x, y, labels)
+            self.roc_auc_curve(model, x, y, labels)
+            self.precision_recall_curve(model, x, y, labels)
 
             print(f"\nCohen's kappa: {round(100*cohen_kappa_score(y, model.predict(x).argmax(axis=-1) ),2)}%\n")
-            #matrices = self.func_confusion_matrix(model, y, x, labels)
+            #matrices = self.confusion_matrix(model, y, x, labels)
             cm = confusion_matrix(y, model.predict(x).argmax(axis=-1))
 
             print(classification_report(y, model.predict(x).argmax(axis=-1), target_names=labels))

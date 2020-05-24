@@ -3,7 +3,7 @@
 #
 #
 #
-#         Class for preprocessing specific mails
+#         Class for preprocessing specific texts
 #
 #
 #
@@ -28,7 +28,7 @@ class CustomPreProcessing(object):
         print('''Welcome in this custom preprocessing class
         ''')
     @classmethod
-    def func_remove_whitespace(self, text):
+    def remove_whitespace(self, text):
         """
         Function to remove extra whitespaces from text
         @param text: (str) text
@@ -38,7 +38,7 @@ class CustomPreProcessing(object):
         return " ".join(text.split())
     
     @classmethod
-    def func_remove_phone_number(self, x):
+    def remove_phone_number(self, x):
         '''
         Function to find and remove phone number with regex    
         @param x: (str) text 
@@ -52,124 +52,9 @@ class CustomPreProcessing(object):
             x = x.replace(i, ' ')
         return x , phone
     
-    @classmethod
-    def func_extract_features(self, df, column):
-        '''
-        Function to extract information and generate dataframe columns. The goal is to extract
-        mail informations as: Id of the courriel, the sender, the receiver, the subject, the date of sending
-        @param df: (pandas dataframe) dataframe containing all the data
-        @param column: (str) the column containing the mails
-        @return: (pandas dataframe) dataframe with the original text, the text without the header and columns containing information
-        '''
-        # ---- make some empty lists
-        text_ = []
-        sender_ = []
-        dest_ = []
-        subject_ = []
-        date_ = []
-        id_mail_ = []
-        phone_ = []
-        # ---- Save the original text
-        df.loc[:, column+"_brut"] = df.loc[:,column]
-        # ---- For each text the loop will extract informations, store them into lists and delete the corresponding text
-        for text in tqdm(df[column]):
-            _text = text.replace("\t", " ").split("\n")
-            text = []
-            # ---- Clean extra space 
-            for line in _text:
-                text.append(self.func_remove_whitespace(line))
-            sender = []
-            dest = []
-            subject = []
-            date = []
-            ind = []
-            id_mail = []
-            for i, lines in enumerate(text):
-                 
-                if any(x in lines for x in ["Id Courriel"]):                       # ---- Looking for Id 
-                    _text = lines.split(":")
-                    if len(_text)>1:
-                        id_mail.append(' '.join(_text[1:]))
-                    else:
-                        id_mail.append(_text[1])
-                    ind.append(i)
-
-                if any(x in lines for x in ["De:","De :", "From:", "From :"]):     # ---- Looking for sender
-                    _text = lines.split(":")
-                    if len(_text)>1:
-                        sender.append(' '.join(_text[1:]))
-                    else:
-                        sender.append(_text[1])
-                    ind.append(i)
-                    
-                if  any(x in lines for x in ["À :", "À:","à:", "à :", "To:", \
-                                             "To :","to:", "to :", "CC:", "CC :", \
-                                             "cc:", "cc :"]):                       # ---- Looking for receiver
-                    _text = lines.split(":")
-                    if len(_text)>1:
-                        dest.append(' '.join(_text[1:]))
-                    else:
-                        dest.append(_text[1])
-                    ind.append(i)
-                    
-                if  any(x in lines for x in ["Subject", "Objet", "objet:", \
-                                             "objet :"]) :                          # ---- Looking for the subject
-                    _text = lines.split(":")
-                    if len(_text)>1:
-                        subject.append(' '.join(_text[1:]))
-                    else:
-                        try:
-                            subject.append(_text[1])
-                        except:
-                            subject.append(np.nan)
-                    ind.append(i)
-                    
-                if  any(x in lines for x in ["Envoyé:", "Envoyé :", "Envoyé le ", \
-                                             "Date:", "Date :"]):                    # ---- Looking for sending date
-                    _text = lines.split(":")
-                    if len(_text)>1:
-                        date.append(':'.join(_text[1:]))
-                    else:
-                        date.append(_text[1])
-                    ind.append(i)   
-            
-            # ---- If there is information to delete inside the text
-            if ind:
-                for i in ind[::-1]:
-                    del text[i]
-            text = '\n'.join(map(str, text))
-            # ---- Remove phone number
-            text, phone = self.func_remove_phone_number(text) 
-
-            # ---- Check if some lists are empty
-            if not phone: phone.append(np.nan)
-            if not id_mail: id_mail.append(np.nan)
-            if not sender: sender.append(np.nan)
-            if not dest: dest.append(np.nan)
-            if not date: subject.append(np.nan)
-
-            # ---- Stack the different informations 
-            phone_.append(','.join(map(str, phone)))
-            text_.append(text )
-            sender_.append(' '.join(map(str, sender)))
-            dest_.append(','.join(map(str, dest)))
-            subject_.append(','.join(map(str, subject )))
-            date_.append(','.join(map(str, date )))
-            id_mail_.append(','.join(map(str, id_mail)))
-        
-        # ---- Construct the different columns 
-        df.loc[:,column] = text_
-        df.loc[:, "id_mail"] =  id_mail_
-        df.loc[:, "From"] = sender_
-        df.loc[:, "To"] = dest_
-        df.loc[:, "Subject"] = subject_
-        df.loc[:, "Date"] = date_
-        df.loc[:, "Phone"] = phone_
-
-        return df
     
     @classmethod
-    def func_remove_upper_case(self, text):
+    def remove_upper_case(self, text):
         '''
         Function to transform upper string in title words
         @param text: (str) text 
@@ -184,7 +69,7 @@ class CustomPreProcessing(object):
         return "\n".join(new_sentences)
     
     @classmethod
-    def func_strip_text(self, text, sentence):
+    def strip_text(self, text, sentence):
         '''
         Function to cut the text where the sentence is find and return the first part.
         Powerful to split the text from signature.
@@ -197,7 +82,7 @@ class CustomPreProcessing(object):
         return text
 
     @classmethod
-    def func_find_corres(self, text, list_words):
+    def find_corres(self, text, list_words):
         '''
         Function to locate a word or list of words in a string.
         @param text: (str) text
@@ -216,7 +101,7 @@ class CustomPreProcessing(object):
         return True if sum(results)>0 else False
     
     @classmethod
-    def func_remove_string(self, text, list_sentences):
+    def remove_string(self, text, list_sentences):
         '''
         Function
         @param text: (str) text
@@ -274,7 +159,7 @@ class PreProcessing(object):
     
     
     @classmethod    
-    def func_detect_lang_google(self, x):
+    def detect_lang_google(self, x):
         '''
         Function to detect the language of the string
         @param x: (str) sentences of text to detect language
@@ -287,7 +172,7 @@ class PreProcessing(object):
             return np.nan
     
     @classmethod
-    def func_remove_numbers(self, text):
+    def remove_numbers(self, text):
         '''
         Function to remove number in text.
         @param text: (str) sentence
@@ -297,7 +182,7 @@ class PreProcessing(object):
         return text
     
     @classmethod
-    def func_remove_URL(self, text):
+    def remove_URL(self, text):
         '''
         Function to remove url from text.
         @param text: (str) sentence
@@ -308,7 +193,7 @@ class PreProcessing(object):
         return url.sub(r'',text)
     
     @classmethod
-    def func_remove_html(self, text):
+    def remove_html(self, text):
         '''
         Function regex to clean text from html balises.
         @param text: (str) sentence 
@@ -319,7 +204,7 @@ class PreProcessing(object):
     
     
     @classmethod
-    def func_remove_emoji(self, text):
+    def remove_emoji(self, text):
         '''
         Function to remove emojis, symbols and pictograms etc from text
         @param text: (str) sentences 
@@ -354,7 +239,7 @@ class PreProcessing(object):
         return text
     
     @classmethod
-    def func_remove_char_specific(self, text):
+    def remove_char_specific(self, text):
         '''
         Function to remove specific characters
         @param text: (str) text
@@ -367,7 +252,7 @@ class PreProcessing(object):
         return ' '.join(stripped)
     
     @classmethod
-    def func_remove_upper_case(self, text):
+    def remove_upper_case(self, text):
         '''
         Function to transform upper string in title words
         @param text: (str) text 
@@ -378,7 +263,7 @@ class PreProcessing(object):
         return " ".join(stripped)
     
     @classmethod
-    def func_remove_stop_words(self, x, stop_word):
+    def remove_stop_words(self, x, stop_word):
         '''
         Function to remove a list of words
         @param x : (str) text 
@@ -418,7 +303,7 @@ class PreProcessing(object):
         @return: (list) most frequent unigrams
         '''
         if lang=="fr":
-            corpus = corpus.apply(lambda x: self.func_remove_stop_words(x, stop_word))
+            corpus = corpus.apply(lambda x: self.remove_stop_words(x, stop_word))
         vec = CountVectorizer(stop_words = "english").fit(corpus)
         bag_of_words = vec.transform(corpus)
         sum_words = bag_of_words.sum(axis=0) 
@@ -452,7 +337,7 @@ class PreProcessing(object):
         @return: (list) most frequent unigrams
         '''
         if lang=="fr":
-            corpus = corpus.apply(lambda x: self.func_remove_stop_words(x, stop_word))
+            corpus = corpus.apply(lambda x: self.remove_stop_words(x, stop_word))
         vec = CountVectorizer(ngram_range=(2, 2), stop_words='english').fit(corpus)
         bag_of_words = vec.transform(corpus)
         sum_words = bag_of_words.sum(axis=0) 
@@ -486,7 +371,7 @@ class PreProcessing(object):
         @return: (list) most frequent unigrams
         '''
         if lang=="fr":
-            corpus = corpus.apply(lambda x: self.func_remove_stop_words(x, stop_word))
+            corpus = corpus.apply(lambda x: self.remove_stop_words(x, stop_word))
         vec = CountVectorizer(ngram_range=(3, 3), stop_words="english").fit(corpus)
         bag_of_words = vec.transform(corpus)
         sum_words = bag_of_words.sum(axis=0) 
@@ -505,7 +390,7 @@ class PreProcessing(object):
         @return: (list) most frequent unigrams
         '''
         if lang=="fr":
-            corpus = corpus.apply(lambda x: self.func_remove_stop_words(x, stop_word))
+            corpus = corpus.apply(lambda x: self.remove_stop_words(x, stop_word))
         vec = CountVectorizer(ngram_range=(5, 5), stop_words="english").fit(corpus)
         bag_of_words = vec.transform(corpus)
         sum_words = bag_of_words.sum(axis=0) 
