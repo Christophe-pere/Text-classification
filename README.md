@@ -2,7 +2,7 @@
 This repository is made for text-classification. Different algorithms are implemented to class documents.
 It contains machine learning implantation et deep learning implantation for binary et multiclass classification. 
 
-This work has been presented in [Binary and Multiclass Text Classification (auto detection in a model test pipeline)](https://medium.com/@pere.christophe1/binary-and-multiclass-text-classification-auto-detection-in-a-model-test-pipeline-938158854943) waiting publication in [Towards Data Science](https://towardsdatascience.com/)
+This work has been presented in [Binary and Multiclass Text Classification (auto detection in a model test pipeline)](https://towardsdatascience.com/binary-and-multiclass-text-classification-auto-detection-in-a-model-test-pipeline-938158854943) published in [Towards Data Science](https://towardsdatascience.com/)
 
 
 ## Models 
