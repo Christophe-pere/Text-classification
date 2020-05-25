@@ -2,6 +2,9 @@
 This repository is made for text-classification. Different algorithms are implemented to class documents.
 It contains machine learning implantation et deep learning implantation for binary et multiclass classification. 
 
+This work has been presented in [Binary and Multiclass Text Classification (auto detection in a model test pipeline)]() published in [Towards Data Science](https://towardsdatascience.com/)
+
+
 ## Models 
 ### Machine Learning
 The models implemented in the notebook for model selection are :
@@ -72,10 +75,15 @@ Shallow Network, Deep Neaural Network, RNN, LSTM, CNN, GRU, CNN-LSTM, CNN-GRU, B
 --- 
 Next steps:
 - Use compressed layer with [TensorNet](https://github.com/google/TensorNetwork) like this [post](https://blog.tensorflow.org/2020/02/speeding-up-neural-networks-using-tensornetwork-in-keras.html) 
+- Implement imbalanced methods to automaticaly balanced a dataset
 - Use [Transformers](https://arxiv.org/abs/1706.03762) ([HuggingFace](https://huggingface.co/))
-- Distributed Neural Networks
-- GridSearch for Hyperparameters tuning
-- Transform the notebook in script with dictionnary of models to test 
+- Implement a Pre-trained transformers
+- Test NLP with Reinforcement Learning
+- Knowledge Graph
+- Use distributed Deep Learning
+- Use TensorNetwork to accelerate Neural Networks
+- Select a class of models with the right method and does hyperparameters tuning 
+- Use Quantum NLP (QNLP)
 ---
 ## Contribution
 Your contributions are always welcome!
