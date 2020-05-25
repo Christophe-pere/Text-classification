@@ -2,274 +2,84 @@
 This repository is made for text-classification. Different algorithms are implemented to class documents.
 It contains machine learning implantation et deep learning implantation for binary et multiclass classification. 
 
-## Table of Contents 
+## Models 
+### Machine Learning
+The models implemented in the notebook for model selection are :
+Multinomial Naive Bayes, logistic Regression, SVM, k-NN, Stochastic Gradient Descent, Gradient Boosting, XGBoost (Early stopping are implemented to stop the training to avoid overfitting).
 
-- [Files](#files)
-- [Parameters](#parameters)
-- [List of Models](#list-of-models)
-- [Sandbox](#sand-box-to-load-data)
-- [Pre-processing text](#pre-processing-text)
-- [Sentiment Polarity](#sentiment-polarity)
-- [Text informations](#text-informations)
-- [Classes Repartition](#classes-repartition)
-- [N-grams](#n-grams)
-	- [Unigrams](#unigrams)
-	- [Unigrams without stopwords](#unigrams-without-stopwords)
-	- [Bigrams](#bigrams)
-	- [Bigrams without stopwords]()
-	- [Trigrams](#trigrams)
-	- [Trigrams without stopwords]()
-	- [5-grams without stopwords]()
-- [Part of Speech-Tagging]()
-- [Machine Learning](#machine-learning)
-	- [Split train test]()
-	- [Classes Wieight]()
-	- [Save Unique Label]()
-	- [Bag of Words]()
-	- [TF-IDF]()
-	- [Load Pretrained Model FastText]()
-	- [Word Embeddings]()
-	- [Sklearn pipeline implement]()
-	- [Multinomial Naïve Bayes](#multinomial-naïve-bayes)
-	- [Logistic Regression](#logistic-regression)
-	- [Support Vector Machine](#support-vector-machine)
-	- [RandomForest](#randomforest)
-	- [Stochastic Descent](#stochastic-descent)
-	- [Gradient Boosting](#gradient-boosting)
-	- [XGBoost](#xgboost)
-- [Deep Learning](#deep-learning)
-	- [Shallow Neural Networks]()
-	- [Deep Neural Networks]()
-		- [Variation 1]()
-		- [Variation 2]()
-	- [Recurrent Neural Network - RNN]()
-	- [Convolution Neural Network - CNN]()
-	- [Recurrent Neural Network - LSTM]()
-	- [CNN - LSTM]()
-	- [CNN - GRU]()
-	- [Recurrent Neural Network - GRU]()
-	- [Bidirectionnal RNN]()
-	- [Bidirectionnal LSTM]()
-	- [Bidirectionnal GRU]()
-	- [Recurrent Convolutational Neural Network]()
-		- [Variation 1]()
-		- [Variation 2]()
-		- [Variation 3]()
-- [Transformers](#transformers)
-- [ULMFit]()
-- [GPT-2]()
-- [Reinforcement Learning]()
-- [Knowledge Graph]()
+### Deep Learning
+The models implemented are:
+Shallow Network, Deep Neaural Network, RNN, LSTM, CNN, GRU, CNN-LSTM, CNN-GRU, Bidirectional RNN, Bidirectional LSTM, Bidirectional GRU, RCNN (Early stopping are implemented to stop the training to avoid overfitting).
 
+## Architecture of the notebook
+> The class_metrics and CustomPreprocessing are available in the folder Scripts
+
+- Module importation
+- Parameters 
+	- Here you'll choose the column name of the text to be classified and the name of the label column
+	- Create Objects containing all the functions needed in the notebook
+- List of Models
+	- This variables are all boolean and permit to configure the type of models you want to test in the model selection
+	- save_results is for the saving the finl dataframe containing the values of all metrics
+	- lang is the parameter to detect the language of the data (API Google) if False, Engish is the default
+	- sample is the parameter to choose a sample of the data (Default 5000 raws)
+	- pre_trained is the parameter to use pretrained fastText model in the deep learning models
+- Sand Box to Load Data
+	- Here you will load your data and make manipulations on them to prepare them for the model selection 
+- Start pipeline
+	- If lang is True this part will detect the language of the text and select the most present in number of raws
+- Polarity
+	- Detect the polarity of the data with TextBlob
+- Text informations
+	- Compute the number of words, the number of character, the density
+- Classes repartition
+	- Show the quantity of text by label
+- N-grams
+	- Unigram
+		- Show top words 
+		- Show top words without stopwords
+	- Bigrams
+		- Show top words 
+		- Show top words without stopwords
+	- Trigrams
+		- Show top words 
+		- Show top words without stopwords
+	- 5-grams
+		- Show top words without stopwords
+- Part of Speech
+	- Extract Lemma, Pos and NER
+- Prepare data for ML Classic
+	- Select a random sample of data (default 5000 raws) if sample is True
+	- Select stopwords file in function of the language 
+	- Create a new column for text without stopwords
+- Class Weights 
+	- Estimate the weight of each class present in the data and determine if the data is balanced or imbalanced
+	- Work in progress, if the dataset is imbalanced create generic data with Smothe or Adasyn
+- Machine learning
+	- Save labels
+	- Create empty dataframe to store the results of each metric for each model on each fold
+	- Compute One-hot encoding
+	- Compute TF-IDF
+	- Compute TF-IDF n-grams (2, 3)
+	- Compute TF-IDF n-grams characters (2, 3)
+	- Load pretrained model fastText
+	- Pad sentences in integers word vectors 
+- All machine learning models
+	- Compute models and metrics
+- All deep learning models
+	- Compute models and metrics
+
+--- 
+Next steps:
+- Use compressed layer with [TensorNet](https://github.com/google/TensorNetwork) like this [post](https://blog.tensorflow.org/2020/02/speeding-up-neural-networks-using-tensornetwork-in-keras.html) 
+- Use [Transformers](https://arxiv.org/abs/1706.03762) ([HuggingFace](https://huggingface.co/))
+- Distributed Neural Networks
+- GridSearch for Hyperparameters tuning
+- Transform the notebook in script with dictionnary of models to test 
 ---
-
-## Files
-
-
-###### [Back to top](#table-of-contents)
-
----
-## Parameters
-
-
-###### [Back to top](#table-of-contents)
-
----
-
-## List of Models
-
-###### [Back to top](#table-of-contents)
-
----
-
-## Sand-box to load data
-
-
-###### [Back to top](#table-of-contents)
-
----
-
-## Pre-processing text
-
-###### [Back to top](#table-of-contents)
-
----
-
-## Sentiment Polarity
-
-###### [Back to top](#table-of-contents)
-
----
-
-## Text informations
-
-###### [Back to top](#table-of-contents)
-
----
-
-## Classes Repartition
-
-###### [Back to top](#table-of-contents)
-
----
-
-## N-grams
-
-### Unigrams
-
-### Unigrams without stopwords
-
-### Bigrams
-
-### Bigrams without stopwords
-
-### Trigrams
-
-### Trigrams without stopwords
-
-### 5-grams without stopwords
-
-
-###### [Back to top](#table-of-contents)
-
----
-
-## Part of Speech-Tagging
-
-###### [Back to top](#table-of-contents)
-
----
-
-## Machine Learning
-
-### Split train test
-
-### Classes Wieight
-
-### Save Unique Label
-
-###### [Back to top](#table-of-contents)
-
----
-
-### Bag of Words
-
-### TF-IDF
-
-### Load Pretrained Model FastText
-
-### Word Embeddings
-
-### Sklearn pipeline implement
-		
-### Multinomial Naïve Bayes
-
-### Logistic Regression
-
-### Support Vector Machine
-
-### RandomForest
-
-### Stochastic Descent
-
-
-### Gradient Boosting
-
-### XGBoost
-
-###### [Back to top](#table-of-contents)
-
----
-
-## Deep Learning
-
-### Shallow Neural Networks
-
-### Deep Neural Networks
-
-#### Variation 1
-
-#### Variation 2 
-
-### Recurrent Neural Network - RNN
-
-### Convolution Neural Network - CNN
-
-### Recurrent Neural Network - LSTM
-
-### CNN - LSTM
-
-### CNN - GRU
-
-### Recurrent Neural Network - GRU
-
-### Bidirectionnal RNN
-
-### Bidirectionnal LSTM
-
-### Bidirectionnal GRU
-
-### Recurrent Convolutational Neural Network
-
-#### Variation 1
-
-#### Variation 2
-
-#### Variation 3
-
-###### [Back to top](#table-of-contents)
-
----
-
-## Transformers
-> Camembert implement
-
-> In progress
-
-###### [Back to top](#table-of-contents)
-
----
-
-## ULMFit
-
-> In progress
-
-###### [Back to top](#table-of-contents)
-
----
-
-## GPT-2
-
-> In progress
-
-
-###### [Back to top](#table-of-contents)
-
----
-
-## Reinforcement Learning
-
-> In progress
-
-###### [Back to top](#table-of-contents)
-
----
-
-
-## Knowledge Graph
-
-> In progress
-
-###### [Back to top](#table-of-contents)
-
----
-
 ## Contribution
+Your contributions are always welcome!
 
-
----
-## Licence 
-
-
+If you want to contribute to this list (please do), send me a pull request or contact me [@chris](twitter.com/Christo35427519) or [chris](linkedin.com/in/phdchristophepere)
 
 --- 
