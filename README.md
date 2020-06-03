@@ -76,7 +76,6 @@ Shallow Network, Deep Neaural Network, RNN, LSTM, CNN, GRU, CNN-LSTM, CNN-GRU, B
 Next steps:
 - Use compressed layer with [TensorNet](https://github.com/google/TensorNetwork) like this [post](https://blog.tensorflow.org/2020/02/speeding-up-neural-networks-using-tensornetwork-in-keras.html) 
 - Implement imbalanced methods to automaticaly balanced a dataset
-- Use [Transformers](https://arxiv.org/abs/1706.03762) ([HuggingFace](https://huggingface.co/))
 - Implement a Pre-trained transformers
 - Test NLP with Reinforcement Learning
 - Knowledge Graph
