@@ -25,8 +25,132 @@ class CustomPreProcessing(object):
     '''
     
     def __init__(self):
-        print('''Welcome in this custom preprocessing class
-        ''')
+        #print('''Welcome in this custom preprocessing class
+        #''')
+        pass
+    
+    @classmethod
+    def extract_features(self, df, column):
+        '''
+        Function to extract information and generate dataframe columns. The goal is to extract
+        mail informations as: Id of the courriel, the sender, the receiver, the subject, the date of sending
+        @param df: (pandas dataframe) dataframe containing all the data
+        @param column: (str) the column containing the mails
+        @return: (pandas dataframe) dataframe with the original text, the text without the header and columns containing information
+        '''
+        # ---- make some empty lists
+        text_ = []
+        sender_ = []
+        dest_ = []
+        subject_ = []
+        date_ = []
+        id_mail_ = []
+        phone_ = []
+        # ---- Save the original text
+        df.loc[:, column+"_brut"] = df.loc[:,column]
+        # ---- For each text the loop will extract informations, store them into lists and delete the corresponding text
+        for text in tqdm(df[column]):
+            _text = text.replace("\t", " ").split("\n")
+            text = []
+            # ---- Clean extra space 
+            for line in _text:
+                text.append(self.remove_whitespace(line))
+            sender = []
+            dest = []
+            subject = []
+            date = []
+            ind = []
+            id_mail = []
+            for i, lines in enumerate(text):
+                 
+                if any(x in lines for x in ["Id Courriel"]):                       # ---- Looking for Id 
+                    _text = lines.split(":")
+                    if len(_text)>1:
+                        id_mail.append(' '.join(_text[1:]))
+                    else:
+                        id_mail.append(_text[1])
+                    ind.append(i)
+
+                if any(x in lines for x in ["De:","De :", "From:", "From :"]):     # ---- Looking for sender
+                    _text = lines.split(":")
+                    if len(_text)>1:
+                        sender.append(' '.join(_text[1:]))
+                    else:
+                        sender.append(_text[1])
+                    ind.append(i)
+                    
+                if  any(x in lines for x in ["À :", "À:","à:", "à :", "To:", \
+                                             "To :","to:", "to :", "CC:", "CC :", \
+                                             "cc:", "cc :"]):                       # ---- Looking for receiver
+                    _text = lines.split(":")
+                    if len(_text)>1:
+                        dest.append(' '.join(_text[1:]))
+                    else:
+                        dest.append(_text[1])
+                    ind.append(i)
+                    
+                if  any(x in lines for x in ["Subject", "Objet", "objet:", \
+                                             "objet :"]) :                          # ---- Looking for the subject
+                    _text = lines.split(":")
+                    if len(_text)>1:
+                        subject.append(' '.join(_text[1:]))
+                    else:
+                        try:
+                            subject.append(_text[1])
+                        except:
+                            subject.append(np.nan)
+                    ind.append(i)
+                    
+                if  any(x in lines for x in ["Envoyé:", "Envoyé :", "Envoyé le ", \
+                                             "Date:", "Date :"]):                    # ---- Looking for sending date
+                    _text = lines.split(":")
+                    if len(_text)>1:
+                        date.append(':'.join(_text[1:]))
+                    else:
+                        date.append(_text[1])
+                    ind.append(i)   
+            
+            # ---- If there is information to delete inside the text
+            if ind:
+                try:
+                    for i in ind[::-1]:
+                        del text[i]
+                except:
+                    pass 
+                
+            text = '\n'.join(map(str, text))
+            # ---- Remove phone number
+            text, phone = self.remove_phone_number(text) 
+
+            # ---- Check if some lists are empty
+            if not phone: phone.append(np.nan)
+            if not id_mail: id_mail.append(np.nan)
+            if not sender: sender.append(np.nan)
+            if not dest: dest.append(np.nan)
+            if not date: subject.append(np.nan)
+
+            # ---- Stack the different informations 
+            phone_.append(','.join(map(str, phone)))
+            text_.append(text )
+            sender_.append(' '.join(map(str, sender)))
+            dest_.append(','.join(map(str, dest)))
+            subject_.append(','.join(map(str, subject )))
+            date_.append(','.join(map(str, date )))
+            id_mail_.append(','.join(map(str, id_mail)))
+        
+        # ---- Construct the different columns 
+        df.loc[:,column] = text_
+        df.loc[:, "id_mail"] =  id_mail_
+        df.loc[:, "From"] = sender_
+        df.loc[:, "To"] = dest_
+        df.loc[:, "Subject"] = subject_
+        df.loc[:, "Date"] = date_
+        df.loc[:, "Phone"] = phone_
+
+        return df
+    
+    
+    
     @classmethod
     def remove_whitespace(self, text):
         """
@@ -115,37 +239,77 @@ class CustomPreProcessing(object):
         return text
     
     @classmethod
-    def find_words(self, text, words_list):
+    def find(self, text, list_words):
+        _index = []
+        _text = text.lower().split()
+
+        for i in list_words:
+            idx = []
+            find = True
+            while find:
+                try:
+                    if idx:
+                        idx.append(_text.index(i.lower(), idx[-1]+1))
+                    else:
+                        idx.append(_text.index(i.lower()))
+                except:
+                    find=False
+                    _index.append(idx)
+        return _index   
+
+    @classmethod
+    def find_nearest(self, array, value):
+        array = np.asarray(array)
+        idx = (np.abs(array - value)).argmin()
+        return array[idx]
+
+    @classmethod
+    def compare_distance_word(self, index, list_ref):
+
+        res = [[self.find_nearest( j, i) for j in index ] for i in list_ref] # find nearest value taking the smallest list into account
+        idx = [all((t - s)<=5 for s, t in zip(i, i[1:])) for i in res]  # check if the each is seperate by maximum 5 words
+        res = [x for x, y in zip(res, idx) if y == True]                # select lists where each words are closed
+        return res
+    
+    @classmethod
+    def find_words(self, text, list_words):
         '''
         Function to locate words in text, estime if the words are closed and if so delete them.
         @param text: (str) text
         @param words_list: (str or list) word or list of words to locate and delete
         @return: (str) text with or without the list (words can't be seperated by more than 5 words)
         '''
-        if type(words_list)==str:     # change string in list if one word is passed
-            words_list=[words_list]
+        if type(list_words)==str:     # change string in list if one word is passed
+            list_words=[list_words]
         if type(text)==tuple:
             print(text)
-        if  all(x.lower() in text.lower() for x in words_list ): # ---- Looking for the words in the text 
-            text_ = text.split()
-            idx = []
-            for i,j in itertools.product(words_list, enumerate(text_)): # loop to locate the words and their position in the text
-                if i.lower() in j[1].lower(): 
-                    idx.append(j[0])
-            successive_index = [True if (t - s <=5) else False for s, t in zip(idx, idx[1:])] # if next word in the 5 successive words 
-            if sum(successive_index)==len(words_list)-1:
-                text = text.split()
-                for i in sorted(set(idx))[::-1]:
-                    del text[i]
-                if len(text)>0:
-                    return ' '.join(text)   # return text without lower char 
-                else: 
-                    return "empty"
-            else:
-                return text
+        if  all(x.lower() in text.lower() for x in list_words ): # ---- Looking for the words in the text 
+            _index = self.find(text, list_words)
+            min_list = np.argmin([len(i) for i in _index])     # list index which minimal size 
+            list_ref = _index[min_list]
+            result = self.compare_distance_word(_index, list_ref)
+            _text = text.split()
+            for i in result[::-1]:
+                del _text[i[0]:i[-1]+1]
+                
+            if _text:
+                return ' '.join(_text)   # return text without lower char 
+            else: 
+                return np.nan
         else:
             return text 
         
+    '''def remove_sentences(text, list_words):
+        if type(list_words)==str:
+            list_words = [list_words]
+        _index = find(text, list_words)
+        min_list = np.argmin([len(i) for i in _index])     # list index which minimal size 
+        list_ref = _index[min_list]
+        result = compare_distance_word(_index, list_ref)
+        _text = text.split()
+        for i in result[::-1]:
+            del _text[i[0]:i[-1]+1]
+        return " ".join(_text)'''
         
 class PreProcessing(object):
     '''
@@ -155,8 +319,8 @@ class PreProcessing(object):
     
     
     def __init__(self):
-        print("Welcome in the preprocessing")
-    
+        #print("Welcome in the preprocessing")
+        pass
     
     @classmethod    
     def detect_lang_google(self, x):
@@ -228,14 +392,14 @@ class PreProcessing(object):
         @param text: (pandas dataframe) text
         @return: (pandas dataframe) clean text 
         '''
-        text = text.str.replace("(<br/>)", "")
-        text = text.str.replace('(<a).*(>).*(</a>)', '')
-        text = text.str.replace('(&amp)', '')
-        text = text.str.replace('(&gt)', '')
-        text = text.str.replace('(&lt)', '')
-        text = text.str.replace('(\xa0)', ' ')  
-        text = text.str.replace("\n", " ")
-        text = text.str.replace("\x92", "'")
+        text = text.replace("(<br/>)", "")
+        text = text.replace('(<a).*(>).*(</a>)', '')
+        text = text.replace('(&amp)', '')
+        text = text.replace('(&gt)', '')
+        text = text.replace('(&lt)', '')
+        text = text.replace('(\xa0)', ' ')  
+        text = text.replace("\n", " ")
+        text = text.replace("\x92", "'")
         return text
     
     @classmethod
